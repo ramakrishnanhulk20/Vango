@@ -86,9 +86,8 @@ export default function Closing() {
             Built on Nimiq Pay. Open source, MIT.
           </span>
           <span className="flex items-center gap-7">
-            {/* SWAP: the public repo URL once the project is pushed. */}
             <a
-              href="#"
+              href="https://github.com/ramakrishnanhulk20/Vango"
               className="label-type group relative text-paper/55 transition-colors duration-300 hover:text-paper"
             >
               GitHub
