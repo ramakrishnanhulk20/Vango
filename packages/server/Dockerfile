@@ -12,5 +12,6 @@ COPY package.json ./
 COPY packages/server ./packages/server
 WORKDIR /repo/packages/server
 EXPOSE 8787
-# The same image runs both processes; the host picks the command per service.
-CMD ["npx", "tsx", "src/index.ts"]
+# The same image runs both processes; the host picks which by setting VANGO_PROCESS
+# to src/watcher/index.ts on the watcher service. Unset, it runs the API.
+CMD ["sh", "-c", "npx tsx ${VANGO_PROCESS:-src/index.ts}"]
