@@ -1,0 +1,25 @@
+.layer {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: var(--grain);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-4%, 3%, 0); }
+  40% { transform: translate3d(3%, -4%, 0); }
+  60% { transform: translate3d(-3%, -2%, 0); }
+  80% { transform: translate3d(4%, 2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .layer {
+    animation: drift 1.4s steps(5) infinite;
+  }
+}

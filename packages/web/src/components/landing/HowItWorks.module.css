@@ -1,0 +1,48 @@
+.frame {
+  position: relative;
+  width: 100%;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+}
+
+.beat {
+  position: relative;
+}
+
+.rail {
+  display: none;
+}
+
+/* Only a wide screen that has not asked for less motion gets the pinned stack.
+   Everywhere else the three beats stay in the flow and read as three blocks.
+   The height and the clipping sit on the stage, never on the frame, because
+   ScrollTrigger inserts the pin spacer inside the frame and that spacer needs
+   room to grow to the full scroll length. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .stage {
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .beat {
+    position: absolute;
+    inset: 0;
+  }
+
+  .beat[data-beat="1"],
+  .beat[data-beat="2"] {
+    opacity: 0;
+  }
+
+  .rail {
+    display: flex;
+  }
+}
+
+.railFill {
+  transform: scaleY(var(--how, 0));
+  transform-origin: top center;
+}

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vango spike</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --ink: #0b0f1a;
+    --paper: #f6f7fb;
+    --line: #d9dced;
+    --accent: #1f2348;
+    --ok: #0f7a6b;
+    --bad: #b3323c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px 14px 48px;
+    max-width: 430px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: -0.01em; }
+  .sub { margin: 0 0 14px; font-size: 13px; color: #5a6076; }
+  .host {
+    display: grid;
+    gap: 4px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 12px;
+    color: #444a63;
+  }
+  .host b { color: var(--ink); font-weight: 600; }
+  section {
+    padding: 14px 12px;
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+  }
+  h2 { margin: 0 0 2px; font-size: 15px; }
+  h2 span { color: #8990a8; font-variant-numeric: tabular-nums; }
+  .what { margin: 0 0 10px; font-size: 12px; color: #5a6076; }
+  button {
+    width: 100%;
+    padding: 11px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  button:disabled { opacity: 0.5; }
+  pre {
+    margin: 10px 0 0;
+    padding: 10px;
+    min-height: 40px;
+    max-height: 260px;
+    overflow: auto;
+    border-radius: 10px;
+    background: #f0f1f7;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  pre.ok { background: rgba(15, 122, 107, 0.1); color: var(--ok); }
+  pre.bad { background: rgba(179, 50, 60, 0.1); color: var(--bad); }
+  #scan-box { width: 100%; min-height: 8px; margin-top: 10px; border-radius: 10px; overflow: hidden; }
+  #qr-box { display: grid; place-items: center; margin-top: 10px; }
+  canvas { border-radius: 8px; }
+</style>
+</head>
+<body>
+  <h1>Vango spike</h1>
+  <p class="sub">Five things to prove on a real phone inside Nimiq Pay, testnet.</p>
+
+  <div class="host">
+    <div>Language: <b id="host-language">reading</b></div>
+    <div>Fiat: <b id="host-fiat">reading</b></div>
+    <div>Provider: <b id="host-provider">reading</b></div>
+    <div>Secure context: <b id="host-secure">reading</b></div>
+  </div>
+
+  <section>
+    <h2><span>1.</span> Connect</h2>
+    <p class="what">Wake the provider, list every address Nimiq Pay hands back, read consensus and block height.</p>
+    <button id="run-connect" type="button">Run connect</button>
+    <pre id="out-connect">Not run yet.</pre>
+  </section>
+
+  <section>
+    <h2><span>2.</span> Sign</h2>
+    <p class="what">Ask the server for a one-time challenge, sign it in the wallet, let the server check the signature.</p>
+    <button id="run-sign" type="button">Run sign</button>
+    <pre id="out-sign">Not run yet.</pre>
+  </section>
+
+  <section>
+    <h2><span>3.</span> Pay</h2>
+    <p class="what">Send 1 test NIM with the memo vango:spike, then wait for the server to read it back off the chain.</p>
+    <button id="run-pay" type="button">Run pay</button>
+    <pre id="out-pay">Not run yet.</pre>
+  </section>
+
+  <section>
+    <h2><span>4.</span> Scan</h2>
+    <p class="what">Open the rear camera inside the Pay browser and decode a QR code.</p>
+    <button id="run-scan" type="button">Start camera</button>
+    <div id="scan-box"></div>
+    <pre id="out-scan">Not run yet.</pre>
+  </section>
+
+  <section>
+    <h2><span>5.</span> Show QR</h2>
+    <p class="what">Draw a QR code a second phone can point its camera at.</p>
+    <button id="run-qr" type="button">Show QR</button>
+    <div id="qr-box"></div>
+    <pre id="out-qr">Not run yet.</pre>
+  </section>
+
+  <script>
+    window.addEventListener('error', (event) => {
+      document.getElementById('host-provider').textContent = `script error: ${event.message}`
+    })
+    window.addEventListener('unhandledrejection', (event) => {
+      document.getElementById('host-provider').textContent = `script error: ${event.reason?.message ?? event.reason}`
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script type="module" src="/spike/main.js"></script>
+</body>
+</html>

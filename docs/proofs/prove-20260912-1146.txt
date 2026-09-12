@@ -1,0 +1,92 @@
+Vango prove-it, 2026-09-12T06:15:42.675Z
+Every step below either proves the product works or shows an attack being refused.
+
+1. Boot: database, migrations and the live chain
+   database   pglite
+   migrations 0 applied, 3 already there
+   network    TestAlbatross
+   rpc        https://rpc.testnet.nimiqwatch.com
+   block      11224480
+   PASS  connected to TestAlbatross at block 11224480
+
+2. Seed: the demo merchant and their card
+   card    Vango Demo Cafe (already there)
+   code    5FQQ2J56
+   reward  Free coffee on visit 3
+   pay to  NQ63NLNX4H6RM3R4XB928Y1X5GTSJUGC5QFJ
+   memo    vango:5FQQ2J56
+   PASS  demo card 5FQQ2J56 ready
+
+3. A real payment from a phone becomes a stamp
+   SKIPPED  started with --skip-wait, no phone payment was waited for
+
+4. Attack: the merchant pays their own counter to farm stamps
+   counter card 2P2G1HZS pays into NQ32P8CRVFXPMACR1J3GDNMGX54P5H02HV2F
+   its owner's remote account, recorded at login, is NQ171ANY7X82MY8RD10B1CENY14R6PLJQB41
+   sent 1 NIM, hash a5df8516cd2b8286b8c7cfd738b7e0c493035653c40aa4459cef49d738436a66
+   included in block 11224482
+   sent 1 NIM, hash 2510926cfffa3fa3554c1fd1c7c0e82f73c0ced76e8273428b98ad99151a2c1f
+   included in block 11224485
+   engine says {"stamped":false,"reason":"sender is merchant"}
+   sent 1 NIM, hash 7976bdeabc28b07cdef361109a9de52263e07efc036782d8680ed999f21cadd9
+   included in block 11224488
+   test NIM returned to the merchant in block 11224488
+   PASS  refused: sender is merchant
+
+5. Attack: the same payment claimed twice
+   second card 05X6FPXR pays into NQ87B9GAG60AU67SPDRB45H7RLR7K20P20NJ
+   sent 1 NIM, hash e45d31027932bf0f526cbbe810ef58b6ea8b1690a2787de5502ba177dd793432
+   included in block 11224491
+   sent 1 NIM, hash 17bb4aeeaa88a20fc159fac573d5734ac25def68fce6842cbfb72cf3184b071a
+   included in block 11224492
+   first claim  {"stamped":true,"stampId":"c41ad024-716d-477b-b929-d14a63ac53c4","cardCode":"05X6FPXR"}
+   second claim {"stamped":false,"reason":"already stamped"}
+   PASS  refused: already stamped
+
+6. Attack: a payment under the card minimum
+   sent 0.5 NIM, hash 94cda564f7c1ee6fc65911915528dd2e6bb5fa46f5f343bcb912376df3fb041e
+   included in block 11224496
+   engine says {"stamped":false,"reason":"below minimum"}
+   PASS  refused: below minimum
+
+   sent 0.5 NIM, hash 67925a1ecde0855bd4c623e088836f285d17a4b90033c68950d4409914687cd3
+   included in block 11224500
+swept 0.5 NIM back to the merchant in block 11224500
+
+Merchant wallet before the attacks 2 NIM, after 2 NIM.
+Nimiq fees are zero and every test payment is handed back, so the run repeats.
+
+7. Attack: a login signature sent twice
+   first send  200
+   replay      401 {"error":"nonce used"}
+   PASS  refused: 401 nonce used
+
+8. Attack: taking the reward before the card is full
+   one stamp of three, start says 409 {"error":"not redeemable yet","progress":{"rewardKind":"nth_free","stamps":1,"target":3,"redeemable":false,"totalLuna":100000,"cashbackLuna":0}}
+   PASS  refused: 409 not redeemable yet
+
+9. Attack: a stranger confirming another merchant's reward
+   stranger reads   404 {"error":"reward not found"}
+   stranger confirms 404 {"error":"reward not found"}
+   owner confirms   200 {"status":"confirmed"}
+   PASS  refused: 404 reward not found, and the real merchant still confirms
+
+10. Attack: settling cashback with a stranger's payment
+   owed 20000 Luna, a stranger paid it, server says 409 {"error":"payment did not come from the merchant"}
+   PASS  refused: 409 payment did not come from the merchant
+
+11. Summary
+   step  result   check
+      1  PASS     Boot: database, migrations and the live chain
+      2  PASS     Seed: the demo merchant and their card
+      3  SKIPPED  A real payment from a phone becomes a stamp
+      4  PASS     Attack: the merchant pays their own counter to farm stamps
+      5  PASS     Attack: the same payment claimed twice
+      6  PASS     Attack: a payment under the card minimum
+      7  PASS     Attack: a login signature sent twice
+      8  PASS     Attack: taking the reward before the card is full
+      9  PASS     Attack: a stranger confirming another merchant's reward
+     10  PASS     Attack: settling cashback with a stranger's payment
+
+prove-it finished, 9 of 10 checks passed
+1 skipped, 0 failed

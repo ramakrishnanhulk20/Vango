@@ -1,0 +1,30 @@
+/* The run reads one scroll progress number, --bp, written by ScrollTrigger. Each
+   block turns on when the run reaches it, so eleven elements animate off one
+   variable and React never renders a frame. */
+.run {
+  --bp: 0;
+  --count: 11;
+}
+
+.rail {
+  transform: scaleX(var(--bp));
+  transform-origin: left center;
+}
+
+.block {
+  --on: clamp(0, calc(var(--bp) * var(--count) - var(--i)), 1);
+  opacity: calc(0.18 + var(--on) * 0.82);
+  transform: translate3d(0, calc((1 - var(--on)) * 12px), 0);
+  will-change: transform, opacity;
+}
+
+.fill {
+  opacity: var(--on);
+  transform: scaleY(var(--on));
+  transform-origin: bottom center;
+}
+
+.tag {
+  --on: clamp(0, calc(var(--bp) * var(--count) - var(--i)), 1);
+  opacity: var(--on);
+}

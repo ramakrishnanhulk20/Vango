@@ -1,0 +1,51 @@
+---
+title: Connect your wallet
+description: What listAccounts gives Vango, why there are two addresses, and what the wallet asks you.
+---
+
+# Connect your wallet
+
+Vango has no sign-up form. Connecting is one read and one signature.
+
+## What listAccounts gives
+
+The first thing Vango calls is `listAccounts()`, the one read the Nimiq Pay provider
+offers. It comes back with **two** addresses, not one:
+
+| Position | What it is | What Vango uses it for |
+|---|---|---|
+| `[0]` | Your visible wallet address, the one Pay shows you | Who you are: it is the address your signature proves, and the address a merchant sees, masked, when you redeem |
+| `[1]` | Your remote account, a contract that actually holds your NIM | Who paid: this is the address that appears as the sender of your payment on the chain |
+
+Both are stored against your Vango user at login, because a stamp arrives from `[1]` while
+a signature comes from `[0]`. If Vango only kept the visible address, your own payments
+would look like a stranger's and no card would ever get stamped.
+
+This is real Nimiq Pay behaviour, confirmed by a Nimiq core developer: your funds sit in
+the remote account and Pay releases them when you make a payment.
+
+## Why the wallet asks you
+
+Three moments show a native Nimiq Pay dialog. Vango never sees your key and cannot move
+money on its own, so every one of them is your decision:
+
+- **Sign in.** Sign a short random login message. No money, no permission.
+- **Pay and stamp.** Pay the shop, with the card's memo already in the field.
+- **Redeem.** Sign a redemption message naming the card, so the shop can check the reward
+  is really yours.
+
+Cancelling any of them is safe. Vango shows the screen again with the same button.
+
+## Wallet syncing
+
+Right after Nimiq Pay starts, `isConsensusEstablished()` can return false for a few
+seconds while the wallet catches up, even though the block number already looks fine.
+Vango shows **wallet syncing** and re-checks before it offers to pay. If you see that
+label for more than a few seconds, close Vango and open it again from Pay.
+
+## What Vango stores about you
+
+Your two addresses, your language and your currency setting, the stamps you have earned
+and the rewards you have taken. No name, no email, no phone identifier. Your addresses are
+public on the chain anyway, and so are your stamps: each one is a payment anybody can look
+up on an explorer.

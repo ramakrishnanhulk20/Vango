@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0b0f1a;
+  --paper: #f3efe6;
+  --stamp: #ff5a2c;
+  --line: rgba(243, 239, 230, 0.14);
+  --ok: #3ddc97;
+  --bad: #ff4d6d;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-stamp: var(--stamp);
+  --color-line: var(--line);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+  --radius-btn: 8px;
+}
+
+html {
+  background-color: var(--ink);
+}
+
+body {
+  background-color: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--stamp);
+  color: var(--ink);
+}
+
+.display-type {
+  font-family: var(--font-display);
+  /* High optical size keeps Fraunces at poster proportions instead of text proportions. */
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 1;
+}
+
+.label-type {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.6875rem;
+}
+
+.grain-layer {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: var(--grain);
+  opacity: 0.07;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+@keyframes grain-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-4%, 3%, 0); }
+  40% { transform: translate3d(3%, -4%, 0); }
+  60% { transform: translate3d(-3%, -2%, 0); }
+  80% { transform: translate3d(4%, 2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes caret-blink {
+  0%, 45% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .grain-layer {
+    animation: grain-drift 1.4s steps(5) infinite;
+  }
+  .caret {
+    animation: caret-blink 900ms steps(1) infinite;
+  }
+}
+
+/* The scroll progress of the hero is published to --hero-scroll by GSAP, so these
+   two layers move at different rates without React rendering a single frame. The
+   hero scrolls 40svh past the fold, so 6vh of lag is the still at 0.85 of scroll
+   and 2vh of lead is the title at 1.05. */
+.parallax-still {
+  transform: translate3d(0, calc(var(--hero-scroll, 0) * 6vh), 0);
+  will-change: transform;
+}
+
+.parallax-title {
+  transform: translate3d(0, calc(var(--hero-scroll, 0) * -2vh), 0);
+  will-change: transform;
+}
+
+/* app screens */
+
+/* Nimiq Pay is known before the app's own scripts run, so the first paint inside the
+   wallet never flashes the "open me in Nimiq Pay" page at somebody already in it, and
+   a plain browser never flashes the wallet's loading state. */
+.pay-shell[data-in-pay="1"] .outside-pay-only {
+  display: none;
+}
+
+.pay-shell:not([data-in-pay="1"]) .in-pay-only {
+  display: none;
+}
+
+.app-card {
+  background: linear-gradient(158deg, #1b2233 0%, #121826 46%, #0d121d 100%);
+  box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.9), 0 2px 0 0 rgba(243, 239, 230, 0.06) inset;
+}
+
+.app-glare {
+  background: linear-gradient(112deg, rgba(243, 239, 230, 0.12) 0%, rgba(243, 239, 230, 0) 40%);
+}
+
+.ticket-edge {
+  background-image: radial-gradient(circle at 6px 50%, transparent 5px, var(--paper) 5px);
+  background-size: 12px 100%;
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .soft-pulse {
+    animation: soft-pulse 1.8s ease-in-out infinite;
+  }
+}
+
+/* merchant screens */
+
+.merchant-field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0;
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  outline: none;
+  transition: border-color 300ms ease;
+}
+
+.merchant-field::placeholder {
+  color: rgba(243, 239, 230, 0.26);
+}
+
+.merchant-field:focus {
+  border-bottom-color: var(--stamp);
+}
+
+.code-field {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  letter-spacing: 0.28em;
+  text-align: center;
+}
+
+/* The camera the library drops a video into. Cover, because a squeezed picture makes a
+   code harder to read, and the corner brackets sit on top of it. */
+.scan-stage video,
+.scan-stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
+}
+
+.scan-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 0 solid var(--stamp);
+}
+
+.scan-corner-tl { border-top-width: 2px; border-left-width: 2px; }
+.scan-corner-tr { border-top-width: 2px; border-right-width: 2px; }
+.scan-corner-bl { border-bottom-width: 2px; border-left-width: 2px; }
+.scan-corner-br { border-bottom-width: 2px; border-right-width: 2px; }
+
+@keyframes scan-sweep {
+  0% { transform: translateY(-46%); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(46%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scan-sweep {
+    animation: scan-sweep 2.2s ease-in-out infinite;
+  }
+}
