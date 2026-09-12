@@ -11,14 +11,14 @@ the door.
   <img src="./packages/web/src/app/icon.svg" width="40" height="40" alt="Vango icon" />
 </p>
 
-[Live app](<LIVE_APP_URL>) · [Docs](<DOCS_URL>) · [Open in Nimiq Pay](https://nimpay.app/miniapps/open/<LIVE_APP_DOMAIN>)
+[Live app](https://vango-card.vercel.app) · [Docs](https://vango-card.vercel.app/docs) · [Open in Nimiq Pay](https://nimpay.app/miniapps/open/vango-card.vercel.app)
 
 ## Live deployments
 
 | What | Value |
 |---|---|
-| App | `<LIVE_APP_URL>` |
-| Docs | `<DOCS_URL>` |
+| App | `https://vango-card.vercel.app` |
+| Docs | `https://vango-card.vercel.app/docs` |
 | API host | `https://api-production-3607.up.railway.app` |
 | Network | Nimiq mainnet (the prove-it command and the demo card run on testnet) |
 | Testnet demo card | `5FQQ2J56`, receiving at [`NQ63 NLNX 4H6R M3R4 XB92 8Y1X 5GTS JUGC 5QFJ`](https://test.nimiq.watch/address/NQ63NLNX4H6RM3R4XB928Y1X5GTSJUGC5QFJ) |
@@ -195,7 +195,7 @@ a signature on their own.
 
 Inside Nimiq Pay on a phone:
 
-1. Open `<LIVE_APP_URL>` through the Pay deep link above, or paste it into Pay's
+1. Open `https://vango-card.vercel.app` through the Pay deep link above, or paste it into Pay's
    Custom URL field.
 2. Approve the one login signature Pay asks for.
 3. Open the demo card, code `5FQQ2J56`.

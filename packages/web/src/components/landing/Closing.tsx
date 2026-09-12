@@ -5,7 +5,7 @@ import Grain from "./Grain";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const OPEN_IN_PAY = "https://nimpay.app/miniapps/open/vango.app";
+const OPEN_IN_PAY = "https://nimpay.app/miniapps/open/vango-card.vercel.app";
 
 export default function Closing() {
   const reduced = useReducedMotion();
