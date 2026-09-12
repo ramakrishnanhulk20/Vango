@@ -245,7 +245,7 @@ The real phone payment behind step 3, exactly as recorded:
 ## Quick start
 
 ```bash
-git clone <REPO_URL>
+git clone https://github.com/ramakrishnanhulk20/Vango
 cd vango
 npm install
 ```
