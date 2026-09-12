@@ -19,8 +19,8 @@ the door.
 |---|---|
 | App | `<LIVE_APP_URL>` |
 | Docs | `<DOCS_URL>` |
-| API host | `<API_HOST>` |
-| Network | `<NETWORK>` (mainnet or testnet) |
+| API host | `https://api-production-3607.up.railway.app` |
+| Network | Nimiq mainnet (the prove-it command and the demo card run on testnet) |
 | Testnet demo card | `5FQQ2J56`, receiving at [`NQ63 NLNX 4H6R M3R4 XB92 8Y1X 5GTS JUGC 5QFJ`](https://test.nimiq.watch/address/NQ63NLNX4H6RM3R4XB928Y1X5GTSJUGC5QFJ) |
 
 ## Overview
