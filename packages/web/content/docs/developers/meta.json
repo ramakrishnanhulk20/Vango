@@ -1,0 +1,10 @@
+{
+  "title": "Developers",
+  "defaultOpen": true,
+  "pages": [
+    "architecture",
+    "api",
+    "running-locally",
+    "the-prove-it-command"
+  ]
+}

@@ -1,0 +1,64 @@
+---
+title: Trust model
+description: The chain is the ledger, the server keeps score, and Vango never holds money.
+---
+
+Vango is built so that the parts you have to trust are as small as possible, and so that the
+parts holding money are none.
+
+## The chain is the ledger
+
+A stamp is not a row somebody typed. It is a confirmed Nimiq payment, public and permanent,
+that anybody can look up on an explorer by its hash. The card's rule, the memo and the
+receiving address are all visible before the customer pays. If the Vango server vanished
+tomorrow, every stamp would still be on the chain and could be counted again from scratch.
+
+## The server indexes and keeps score
+
+The server's whole job is reading. It fetches transactions from a Nimiq node, decides which
+of them satisfy a card's rule, and keeps the count. It holds no balance, has no wallet key,
+and cannot move a single NIM. Money moves twice in Vango, and both times it is a wallet
+paying another wallet directly: the customer paying the merchant, and the merchant paying
+cashback back to the customer.
+
+## What counts as a stamp
+
+All six of these have to be true, and the server checks each one against the chain, not
+against what the phone claims:
+
+1. The transaction is **included** in a block.
+2. It was **paid to the card's receiving address**, which is always the merchant's own wallet.
+3. It carries the card's **memo**, `vango:CODE`.
+4. Its value is **at or above the card's minimum**, 1 NIM by default.
+5. The **sender is not the merchant**, nor any address the merchant controls.
+6. That **transaction hash has never been counted before**, enforced by a unique index in the
+   database, so a retry, the watcher and the phone all seeing the same payment still produce
+   exactly one stamp.
+
+## What counts as a redemption
+
+The customer signs a message naming the card, valid once and for ten minutes. The server
+recomputes progress from stamps minus rewards already taken, and only then opens a reward.
+The reward becomes a token, plus a six-digit code the merchant can type. Only the merchant
+who owns the card can read or confirm it. One card and customer can have one pending reward
+at a time, and confirming is a single conditional write, so two taps cannot hand over two
+rewards.
+
+On a cashback card, "confirmed" is not the end. The merchant pays from their own wallet, and
+the server checks on chain that the payment was included, went to the customer, was at least
+the amount owed, and came from the merchant. One payment settles at most one reward.
+
+## What Vango never does
+
+- It never holds, escrows or forwards your money.
+- It never asks for a key, a seed phrase or a password.
+- It never lets a card point at an address other than the wallet that created it.
+- It never writes a stamp from anything except a transaction it fetched from the chain itself.
+- It never stores your name, email or device identifier.
+
+## Where to look next
+
+- [Security overview](/docs/security/overview): what holds money, and the four ways in.
+- [Threat model](/docs/security/threat-model): every attack we could think of, what stops it,
+  and the script that proves it.
+- [Audits](/docs/security/audits): who checked this, and how honestly.

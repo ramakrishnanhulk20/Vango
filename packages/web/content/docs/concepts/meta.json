@@ -1,0 +1,9 @@
+{
+  "title": "Concepts",
+  "defaultOpen": true,
+  "pages": [
+    "how-it-works",
+    "why-nimiq-pay",
+    "trust-model"
+  ]
+}

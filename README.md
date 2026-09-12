@@ -291,7 +291,7 @@ Switch Nimiq Pay to testnet mode first (long-press the settings button for ten
 seconds, then turn testnet mode on) and tap its faucet for 110,000 free test NIM.
 Paste the cloudflared HTTPS address into Pay's Custom URL field; Pay keeps the domain
 and drops the path, so the app has to live at `/`. Full steps are in
-`packages/docs/docs/getting-started/get-test-nim.md`.
+`packages/web/content/docs/getting-started/get-test-nim.mdx` (live at /docs/getting-started/get-test-nim).
 
 ## API
 
@@ -366,7 +366,7 @@ money; every payment goes wallet to wallet.
 packages/
   server/   Fastify API, chain watcher, Drizzle schema, domain logic, tests
   web/      Next.js mini app: customer and merchant screens, the Nimiq Pay client
-  docs/     Docusaurus documentation site
+  content/docs/   the documentation, served by the app at /docs
 docs/
   security/  the threat model
   proofs/    saved output of real prove-it runs against the live testnet
@@ -384,7 +384,7 @@ docs/
 | Next.js | The mini app frontend |
 | Tailwind CSS | Styling |
 | framer-motion, GSAP, Lenis | Motion and scroll |
-| Docusaurus | The documentation site |
+| Fumadocs | The /docs route inside the app |
 
 ## Security
 

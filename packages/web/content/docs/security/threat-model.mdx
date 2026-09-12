@@ -1,0 +1,82 @@
+---
+title: Threat model
+description: Who attacks Vango, where they can get in, what stops each attack, and the proof.
+---
+
+Vango never holds money. Payments go from a customer's Nimiq Pay wallet straight to the
+merchant's address, and cashback goes from the merchant's wallet straight to the
+customer's. The server only reads the chain and keeps score. That removes the biggest
+class of attacks (nobody can drain a vault that does not exist) and leaves the ones below.
+Every claim here has a script that tries to break it, run against the live testnet, with
+the output saved under `docs/proofs/`.
+
+## Who attacks, and what they want
+
+- **A customer who wants free rewards.** Fake a stamp, count one payment twice, redeem a
+  card that is not full, redeem the same reward twice, use somebody else's reward.
+- **A merchant who wants to look popular or avoid paying.** Stamp their own card to inflate
+  numbers, mark cashback as paid without paying, confirm a reward that was never earned.
+- **A stranger.** Take over a session, read or confirm another merchant's rewards, guess a
+  six-digit code, flood the API.
+- **A bug.** Two processes stamping the same payment, a retried request paying twice, a
+  node that drops a request mid-read.
+
+## Entry points
+
+1. The mini app's JSON API (login, cards, stamp claim, wallet, redemption).
+2. The chain watcher reading public RPC.
+3. The public RPC node itself (shared, rate limited, could lie or lag).
+4. The Nimiq Pay WebView (the app's own code runs there; the wallet is outside it).
+
+## What stops each attack
+
+| Attack | What stops it | Proof |
+|---|---|---|
+| Fake a stamp without paying | A stamp is only ever written from a confirmed on-chain transaction the server fetched itself, to the card's receiving address, with the card's memo, at or above the minimum | unit tests in `stamps.test.ts`; live prove-it steps 4 to 6 |
+| Count one payment twice (retry, watcher and phone both seeing it, replayed claim) | Unique index on the transaction hash; insert is "do nothing on conflict" | "refuses the same transaction hash twice"; prove-it step 5 |
+| Merchant stamps their own card | A card always receives at the merchant's own wallet address, and a sender equal to the merchant's visible address, remote account, or the receiving address of any of their cards is refused. Nimiq itself rejects a payment whose sender is its recipient | "refuses a payment from the merchant's own address", "a merchant cannot stamp one of their cards from another of their cards' address"; prove-it step 4 |
+| Pay a tiny amount for a stamp | Per-card minimum, default 1 NIM | "refuses a payment below the card minimum"; prove-it step 6 |
+| Log in as someone else | Ed25519 signature over a single-use, ten-minute challenge; the public key must derive to the claimed address | `auth.test.ts`; prove-it step 7 replay |
+| Replay a login or redemption signature | Nonce is single use and expires | "refuses a reused login nonce", "refuses a replayed redemption signature" |
+| Redeem before the card is full | Server recomputes progress from stamps minus confirmed redemptions at start, sign and confirm | "refuses to redeem a card that is not full"; prove-it step 8 |
+| Redeem twice | A partial unique index allows one pending reward per card and customer, so two concurrent signs cannot both open one; confirm is a single conditional update; consumed stamps are subtracted | "two concurrent signs for one full card open exactly one reward", property test "stamps consumed never exceed stamps earned" |
+| Read or confirm another merchant's reward | Every redemption lookup is joined to the caller's own cards | "refuses a merchant confirming another merchant's redemption"; prove-it step 9 |
+| Guess a six-digit code | Codes only resolve among one merchant's live pending rewards (ten-minute window), are unique among them by a partial unique index, and are rate limited by IP; the merchant is the only caller who can use them | `redeem.test.ts`; "six-digit codes never collide among one merchant's pending rewards"; rate-limit test |
+| Mark cashback paid without paying | The server fetches the hash from the chain and requires: included, recipient is the customer, value at least the amount owed, sender is the merchant; one hash settles at most one reward | "cashback settles once and the same hash cannot settle twice", "refuses a cashback payment that did not come from the merchant"; prove-it step 10 |
+| Steal a session | Tokens are 32 random bytes with a `vs1.` prefix, stored only as a hash, expire in 30 days, never logged; a token is never a record id | `auth.test.ts` |
+| Flood the API | Rate limits keyed by IP (60 per minute, tighter on auth and redeem); every hit logged | "rate limits repeated login attempts" |
+| RPC node lies or lags | Stamps need `blockNumber > 0`; the watcher cursor only moves over blocks whose payments were handled; the public node is one of several that can be configured | `watcher.test.ts` |
+| Busy address outruns the watcher | Paged reads of 500 with a cap and a next-pass catch-up | "reads a busy address across more than one page" |
+
+## Weaknesses we did not fix, stated plainly
+
+- **A merchant can stamp customers who did not really buy anything** by paying them and
+  asking them to pay back with the memo. That costs the merchant real NIM per stamp and
+  gains them nothing but a vanity number. Not worth defending.
+- **A customer with two wallets is two customers.** Stamps follow the wallet. That is how
+  physical stamp cards work too.
+- **The public RPC node is a trusted reader.** If it served false transactions, stamps
+  could be wrong. Mitigation available later: read from two independent nodes and require
+  agreement. Not built in v1.
+- **Session tokens have no logout.** A stolen token is valid until it expires. A logout
+  route is a small addition planned for v1.1.
+- **No merchant identity beyond a wallet.** Anyone can create a card called "Starbucks".
+  Customers see the merchant's address and the card's name; brand verification is not a
+  v1 feature and is stated as such in the app. What a card cannot do is point at
+  somebody else's wallet: it always receives at the wallet that created it.
+- **Six-digit codes are guessable in principle.** They are useless without being that
+  merchant's signed-in phone, within ten minutes, under a rate limit. Stated, accepted.
+
+## Data we hold, and why
+
+Wallet addresses (public by nature), card definitions, stamp records (which are public
+on the chain anyway), redemption records, session hashes, the user's chosen language and
+currency. No names, no emails, no device identifiers in v1. Nothing that is not either
+public on the chain or needed to keep score.
+
+## Reading this alongside the proofs
+
+Every "prove-it step" in the table above is a numbered step in
+[the prove-it command](/docs/developers/the-prove-it-command), run against the live testnet with
+its output saved. Every named test is in the offline suite under `packages/server/src`. What was
+checked and what was not is set out in [audits](/docs/security/audits).

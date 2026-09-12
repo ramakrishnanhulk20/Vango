@@ -1,0 +1,9 @@
+{
+  "title": "Getting started",
+  "defaultOpen": true,
+  "pages": [
+    "quick-start",
+    "connect-wallet",
+    "get-test-nim"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Security",
+  "defaultOpen": true,
+  "pages": [
+    "overview",
+    "threat-model",
+    "audits"
+  ]
+}

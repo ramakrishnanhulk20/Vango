@@ -1,0 +1,46 @@
+---
+title: Overview
+description: Vango is a loyalty card that lives in a Nimiq Pay wallet. The payment is the stamp and the chain is the card.
+---
+
+Vango is a loyalty card inside a Nimiq Pay wallet. A customer pays the shop in NIM, the
+payment carries a short memo like `vango:5FQQ2J56`, and that payment on the Nimiq chain is
+the stamp. There is no plastic, no app to install, and no fee on the payment.
+
+## Why it works this way
+
+A paper card gets lost and a plastic one needs a terminal, a printer and a monthly bill.
+Every loyalty app asks the customer to install something, and most of them ask the shop to
+trust a company with its money.
+
+Vango asks for neither. The customer is already paying, so the payment does the work of the
+stamp. The NIM goes straight from the customer's wallet to the shop's own wallet, in about a
+second, and Vango never touches it. What Vango does is read the chain back and count.
+
+Because the count lives on a public chain, both sides can check it. A customer can prove a
+visit even if Vango disappears tomorrow, and a shop cannot quietly reset anyone's card.
+
+## One visit, end to end
+
+1. A merchant opens a card: the reward, the rule, and the wallet the money goes to.
+2. A customer opens the card from a link, a QR on the counter, or the eight-character code.
+3. The customer pays in Nimiq Pay. The memo is filled in for them.
+4. The server fetches that transaction from a Nimiq node and, if it satisfies the card's
+   rule, it becomes one stamp. A chain watcher makes the same pass in the background.
+5. When the card is full, the customer signs a message. That signature becomes a six-digit
+   code and a QR the merchant scans at the counter.
+
+<StartHere />
+
+## How these docs are grouped
+
+- **Getting started**: open Vango inside Nimiq Pay, what the two wallet addresses are, and
+  how to get free testnet NIM.
+- **Concepts**: the loop in five steps, the Nimiq Pay features it leans on, and exactly what
+  counts as a stamp.
+- **Guides**: one page per job, for customers and for merchants.
+- **Developers**: the three architecture diagrams, every API route, how to run the whole
+  thing locally, and the one command that proves the claims against the live testnet.
+- **Security**: what holds money, every attack we ran at it, and an honest note on what has
+  not been audited.
+- **FAQ**: ten questions people actually ask, answered short.
