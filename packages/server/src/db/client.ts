@@ -36,7 +36,7 @@ export function createDb(target: DbTarget = {}): DbHandle {
   const url = target.url ?? (target.dataDir ? undefined : config.DATABASE_URL)
 
   if (url) {
-    const sql = postgres(url, { max: 4 })
+    const sql = postgres(url, { max: 4, onnotice: () => {} })
     return {
       db: drizzlePostgres(sql, { schema }) as unknown as Db,
       kind: 'postgres',
