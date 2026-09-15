@@ -148,7 +148,10 @@ API the mini app calls (JSON, `Authorization: Bearer vs1...` where marked):
 
 ## Where it runs
 
-- API and mini app: Vercel (Ram deploys).
-- Watcher: one small always-on process (Fly.io, Railway or a VPS with pm2).
-- Database: Neon Postgres, `DATABASE_URL`. Locally and in tests: PGlite, no install.
-- Network follows the wallet: one deployment per network (`NIMIQ_NETWORK`).
+- Mini app and landing: Vercel, https://vango-card.vercel.app, which rewrites `/api/*`
+  to the API host.
+- API and watcher: two Railway services from one image (`packages/server/Dockerfile`),
+  API at https://api-production-3607.up.railway.app.
+- Database: Railway Postgres, `DATABASE_URL`. Locally and in tests: PGlite, no install.
+- Network follows the wallet: one deployment per network (`NIMIQ_NETWORK`); the live
+  deployment is mainnet, the prove-it command runs on testnet.
