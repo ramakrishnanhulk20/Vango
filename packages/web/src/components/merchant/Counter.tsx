@@ -34,7 +34,10 @@ export default function Counter({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setLink(`${window.location.origin}/app/c/${code}`);
+    // Nimiq Pay's own scanner reads payment requests only and drops the memo, so the
+    // counter code is the deep link: any camera app opens it, Pay lands on the card page,
+    // and the customer's tap on "Pay and stamp" is what carries the memo.
+    setLink(`https://nimpay.app/miniapps/open/${window.location.host}/app/c/${code}`);
     setCanShare(typeof navigator.share === "function");
   }, [code]);
 
@@ -175,6 +178,9 @@ export default function Counter({ code }: { code: string }) {
               {card.code}
             </p>
             <p className="label-type mt-3 text-center text-ink/50">Stand this on the counter</p>
+            <p className="mt-2 text-center text-[0.8125rem] leading-snug text-ink/60">
+              Customers scan it with their phone camera. It opens this card inside Nimiq Pay.
+            </p>
           </div>
         </div>
       </Reveal>

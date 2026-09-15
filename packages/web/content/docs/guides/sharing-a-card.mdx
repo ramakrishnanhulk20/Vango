@@ -21,9 +21,9 @@ a counter and it survives the journey, which a URL does not.
 
 | Form | Looks like | Use it for |
 |---|---|---|
-| Card link | `https://vango.app/app/c/5FQQ2J56` | Anywhere a customer can tap: your bio, a WhatsApp message, a printed QR |
-| Pay deep link | `https://nimpay.app/miniapps/open/vango.app` | Opening Vango inside Nimiq Pay from outside it |
-| Pay deep link, scheme form | `nimiqpay://miniapp?url=vango.app/app/c/5FQQ2J56` | The same thing with the card in it, for a native context that handles custom schemes |
+| Card link, the one the counter QR carries | `https://nimpay.app/miniapps/open/vango-card.vercel.app/app/c/5FQQ2J56` | Anywhere a customer can tap or scan with a phone camera: it opens the card inside Nimiq Pay |
+| Plain web link | `https://vango-card.vercel.app/app/c/5FQQ2J56` | A browser tab; shows the card and an Open in Nimiq Pay button |
+| Scheme form | `nimiqpay://miniapp?url=vango-card.vercel.app/app/c/5FQQ2J56` | The same, for a native context that handles custom schemes |
 | Code only | `5FQQ2J56` | Speaking, printing, or a sign on the wall |
 
 Two things about the deep link that are easy to get wrong:
@@ -34,6 +34,14 @@ Two things about the deep link that are easy to get wrong:
   the card page.
 - **HTTPS only.** The wallet and the camera both need a secure context. A plain `http://`
   address will open and then quietly do nothing useful.
+
+## Which scanner
+
+Nimiq Pay has its own scanner for payment requests. It reads those and nothing else, and a
+payment request scanned there arrives without the memo, so it can never be a stamp; we paid
+one on mainnet to check. The counter QR is therefore a link for the phone's camera app, not
+for Pay's scanner. The camera opens the link, Nimiq Pay opens on the card, and the customer's
+tap on Pay and stamp is what carries the memo.
 
 ## The QR code
 
